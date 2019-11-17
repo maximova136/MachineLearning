@@ -4,7 +4,7 @@
 # # Lab 1 by Maximova Viktoria
 
 # # Задача
-# #### Классифицировать крафтовые напитки, описанные набором признаков, по их стилю.
+# #### Классифицировать крафтовые пивные напитки, описанные набором признаков, по их стилю.
 
 # In[1]:
 
@@ -45,7 +45,7 @@ type(data)
 # In[4]:
 
 
-data
+data.head()
 
 
 # Видно, что в `data` есть лишние столбцы - первый (так как дублирует индексацию) и четвертый (уникальный индекс не является значащим параметром). Уберем лишние столбы:
@@ -72,7 +72,7 @@ data2 = pd.read_csv('breweries.csv', sep=';', header=0, engine='python')
 # In[8]:
 
 
-data2
+data2.head()
 
 
 # В описании данных было заявлено, что breweries.csv содержит 4 поля, но их оказалось больше. Уберем лишние (начиная с 5-го).
@@ -175,7 +175,7 @@ for i, row in d.iterrows():
 # In[22]:
 
 
-d
+d.head()
 
 
 # In[23]:
@@ -188,7 +188,7 @@ d = d.drop(columns="brewery_id")
 # In[24]:
 
 
-d[['style', 'state']]
+d[['style', 'state']].head()
 
 
 # In[25]:
@@ -226,7 +226,7 @@ pass
 # In[29]:
 
 
-d['style'] == 'American IPA'
+(d['style'] == 'American IPA').head()
 
 
 # In[30]:
@@ -327,7 +327,7 @@ d['ibu'] = d['ibu'].fillna(0)
 # In[40]:
 
 
-d['ibu']
+d['ibu'].head()
 
 
 # In[41]:
@@ -472,7 +472,7 @@ d.head()
 
 d2 = pd.concat((data_numerical, data_class, data_cat), axis=1)
 print(d2.shape)
-print(d2)
+print(d2.head())
 
 
 # In[60]:
