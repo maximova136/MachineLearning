@@ -782,3 +782,112 @@ plt.xlim([-1, d_first])
 # ## Вывод
 
 # Таким образом, минимальная ошибка алгоритмов на тестовой выборке составила 10%. Оптимальные результаты продемонстрировал алгоритм случайного леса, не сильно опередив метод ближайших соседей с k=10. 
+
+# # Лабораторная №2
+
+# Применим PCA для сокращения размерности пространства признаков. Подберем оптимальное значение параметра n_components.
+# Используем случайный лес, так как в предыдущих экспериментах данный классификатор показал наименьшую ошибку на тестовой выборке.
+
+# In[111]:
+
+
+from sklearn.decomposition import PCA
+
+components_arr = np.arange(1,20)
+err_test = []
+err_train = []
+err_test_mean = []
+err_train_mean = []
+for components in components_arr:
+    pca = PCA(n_components=components)
+    X_train_pca = pca.fit_transform(X_train)
+    X_test_pca = pca.transform(X_test)
+
+    rf = ensemble.RandomForestClassifier(n_estimators = 1000)
+    rf.fit(X_train_pca, y_train)
+
+    y_train_predict = rf.predict(X_train_pca)
+    y_test_predict = rf.predict(X_test_pca)
+    err_train.append(np.max(np.mean(y_train != y_train_predict)))
+    err_test.append(np.max(np.mean(y_test != y_test_predict)))
+
+    err_train_mean.append(np.mean(np.mean(y_train != y_train_predict)))
+    err_test_mean.append(np.mean(np.mean(y_test != y_test_predict)))
+
+
+# In[117]:
+
+
+plt.semilogx(components_arr, err_test, 'b-o', label = 'test')
+plt.semilogx(components_arr, err_train, 'r-o', label = 'train')
+plt.xlim([np.max(components_arr), np.min(components_arr)])
+plt.title('Max error vs. Сomponents number')
+plt.xlabel('Сomponents number')
+plt.ylabel('Max error')
+plt.legend()
+
+
+# In[114]:
+
+
+plt.semilogx(components_arr, err_test_mean, 'b-o', label = 'test')
+plt.semilogx(components_arr, err_train_mean, 'r-o', label = 'train')
+plt.xlim([np.max(components_arr), np.min(components_arr)])
+plt.title('Mean error vs. Сomponents number')
+plt.xlabel('Сomponents number')
+plt.ylabel('Mean error')
+plt.legend()
+
+
+# Минимальное значение ошибки
+
+# In[115]:
+
+
+min_train_err = np.min(err_train)
+min_test_err = np.min(err_test)
+print(min_train_err, min_test_err)
+
+
+# Оптимальное число компонент
+
+# In[116]:
+
+
+index = err_test.index(min_test_err)
+components_opt = components_arr[index]
+print(components_opt)
+
+
+# Используем классификатор с оптимальным значением
+
+# In[119]:
+
+
+pca = PCA(n_components=components_opt)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
+rf = ensemble.RandomForestClassifier(n_estimators = 1000)
+rf.fit(X_train_pca, y_train)
+
+err_train = np.mean(y_train != rf.predict(X_train_pca))
+err_test = np.mean(y_test != rf.predict(X_test_pca))
+
+print(err_train, err_test)
+
+
+# In[121]:
+
+
+print("Mean error:")
+print(np.mean(err_train_rf), np.mean(err_test_rf))
+print("Maximum error:")
+print(np.max(err_train_rf), np.max(err_test_rf))
+
+
+# При использовании классификатора случайный лес на тестовой выборке получали среднюю ошибку 0,92% и максимальную 10,4%.
+# 
+# Применяя PCA с 5 компонентами получили на тестовой выборке такую же среднюю ошибку 0,92% и максимальную ошибку 10,4%.
+# 
+# Следственно, применение PCA не влияет на значение ошибки.
